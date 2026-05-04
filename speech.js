@@ -137,17 +137,27 @@ window.onload = function () {
   } 
    
   
-  playTlAudioButton.onclick = function(){
+  function enableTranslatedAudio(){
     playTranslations = true;
     playTlAudioButton.style.display = 'none';
     pauseTlAudioButton.style.display = 'inline-block';
-  };
+  }
 
-  pauseTlAudioButton.onclick = function(){
+  function disableTranslatedAudio(){
     playTranslations = false;
     playTlAudioButton.style.display = 'inline-block';
     pauseTlAudioButton.style.display = 'none';
+  }
+
+  playTlAudioButton.onclick = function(){
+    enableTranslatedAudio();
   };
+
+  pauseTlAudioButton.onclick = function(){
+    disableTranslatedAudio();
+  };
+
+  enableTranslatedAudio();
 
   function playTranslatedAudio(){
     var currentTime = video.currentTime;
