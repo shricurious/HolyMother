@@ -18,6 +18,8 @@ http://localhost:3000/
 
 - English subtitles
 - Hindi subtitles and generated audio
+- French subtitles and generated audio
+- German subtitles and generated audio
 - Russian subtitles and generated audio
 
 ## Generate Audio
