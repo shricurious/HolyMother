@@ -5,7 +5,7 @@ window.onload = function () {
     var audioBasePath = params.get("audio_base") || ("speech/" + languageCode);
     var subtitlePath = params.get("srt_file") || ("video/RPuLKaEqRH0/" + srtLanguage + "/captionFile_" + srtLanguage + ".srt");
     var saveFileName = params.get("save_file") || ("captionFile_" + srtLanguage + "_1.srt");
-    var originalSubtitlePath = params.get("original_srt_file") || "video/RPuLKaEqRH0/en/captionFile_en.srt";
+    var originalSubtitlePath = params.get("original_srt_file") || "captionFile_en-EN.srt";
     var storageKey = "changedSubtitles:" + languageCode;
 
     var video = document.getElementById("video");
