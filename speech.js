@@ -52,11 +52,11 @@ window.onload = function () {
     subtitleFile.onload = function () {
       if (subtitleFile.status === 200) {
          subtext = subtitleFile.responseText;
-         olSubtitlesTA.innerHTML = subtext;
+         olSubtitlesTA.value = subtext;
         if (!(savedValue === null || savedValue.trim() === "")){
-          subtitlesTextArea.innerHTML = savedValue;
+          subtitlesTextArea.value = savedValue;
         }else{
-        subtitlesTextArea.innerHTML = subtext;
+        subtitlesTextArea.value = subtext;
         }
         subtitles = parseSRT(subtext);
         totalLines = (subtitles.length * 5) ;
@@ -232,7 +232,7 @@ window.onload = function () {
       }
     });
     subtitlesTextArea.addEventListener("input",function () {
-     // video.pause();
+      localStorage.setItem(storageKey, this.value);
     });
     subtitlesTextArea.addEventListener("change", function() {
       //replace the text in the variable and highlight it.  
@@ -283,7 +283,7 @@ window.onload = function () {
         
         olSubtitlesTA.style.display = "block";
          subtextOL = subtitleOL.responseText;
-          olSubtitlesTA.innerHTML = subtextOL;
+          olSubtitlesTA.value = subtextOL;
           subtitlesTextArea.style.float = "right";
          subtitlesTextArea.style.width ="50%";
       } else {
@@ -312,7 +312,7 @@ window.onload = function () {
    var showHide = event.target.value;
   if(showHide=="show"){
     //make sure we load the original text for comparison
-    olSubtitlesTA.innerHTML = subtext;
+    olSubtitlesTA.value = subtext;
     //set the button
     event.target.value = "hide";
     showDiff.innerHTML= "Hide Comparison";

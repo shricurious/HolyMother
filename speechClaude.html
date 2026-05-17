@@ -17,17 +17,22 @@
 
     body {
       margin: 0;
+      background: #f6f8fb;
     }
 
     .container {
       display: flex;
       border: none;
       flex-direction: column;
-      justify-content: center;
+      justify-content: flex-start;
       justify-items: center;
       align-items: center;
       margin: 0;
       position: relative;
+      width: 100%;
+      min-height: 100vh;
+      box-sizing: border-box;
+      padding: 12px;
     }
 
     .video-container {
@@ -37,8 +42,11 @@
       justify-content: center;
       justify-items: center;
       border: none;
-      height: 100vh;
-      margin: 0;
+      width: min(100%, 1120px);
+      min-height: auto;
+      margin: 0 auto;
+      box-sizing: border-box;
+      background: #fff;
     }
 
     #video {
@@ -80,10 +88,15 @@
       align-items: center;
       align-self: center;
       width: 100%;
+      gap: 8px;
+      box-sizing: border-box;
+      padding: 8px 0;
     }
 
     .textbox {
       width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
       scroll-behavior: smooth;
       font-size: 1rem;
     }
@@ -93,6 +106,15 @@
       display: flex;
       justify-content: center;
       width: 100%;
+      gap: 6px;
+      flex-wrap: wrap;
+      box-sizing: border-box;
+      padding: 8px 0;
+    }
+
+    .buttonbar button {
+      max-width: 100%;
+      white-space: normal;
     }
 
     /* =====================================================
@@ -109,8 +131,9 @@
       align-self: center;
       /* Matches the original video height so the wrapper
          is exactly as tall as the video element          */
-      height: 81vh;
+      height: clamp(260px, 58vh, 720px);
       display: flex;
+      background: #000;
     }
 
     /* Re-anchor #video to fill the wrapper */
@@ -142,8 +165,7 @@
     @media (max-width: 768px) {
       .video-container {
         height: auto;
-        min-height: 100svh;  /* svh avoids mobile browser
-                                chrome pushing content    */
+        min-height: auto;
         padding-bottom: 8px;
       }
     }
@@ -173,6 +195,10 @@
       .subtitlebox {
         flex-direction: column;
       }
+
+      .subtitlebox .textbox {
+        width: 100% !important;
+      }
     }
 
     /* --- Button bar: wrap on phones -------------------- */
@@ -198,12 +224,18 @@
 
     /* --- Diff output overflow -------------------------- */
     #diffoutput {
-      width: 100%;
+      width: min(100%, 1120px);
+      box-sizing: border-box;
       overflow-x: auto;
+      overflow-y: visible;
+      margin: 12px auto 0;
+      padding-bottom: 12px;
+      -webkit-overflow-scrolling: touch;
     }
 
     #diffoutput table {
-      min-width: 0;
+      width: 100%;
+      min-width: 760px;
       word-break: break-word;
     }
 
@@ -214,7 +246,43 @@
       align-items: center;
       gap: 6px;
       padding: 8px;
-      width: 100%;
+      width: min(100%, 1120px);
+      box-sizing: border-box;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 8px;
+      }
+
+      .video-wrapper {
+        height: auto;
+        aspect-ratio: 16 / 9;
+      }
+
+      .textbox {
+        min-height: 120px;
+        font-size: 0.9rem;
+      }
+
+      #diffoutput {
+        margin-top: 8px;
+      }
+
+      #diffoutput table {
+        min-width: 680px;
+        font-size: 0.82rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .buttonbar button {
+        flex: 1 1 100%;
+      }
+
+      #diffoutput table {
+        min-width: 600px;
+      }
     }
   </style>
 </head>

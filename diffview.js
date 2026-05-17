@@ -78,6 +78,86 @@ var diffview = {
 			e.appendChild(document.createTextNode(text));
 			return e;
 		}
+
+		function appendTokens (node, tokens, clazz) {
+			for (var i = 0; i < tokens.length; i++) {
+				if (clazz) {
+					var span = document.createElement("span");
+					span.className = clazz;
+					span.appendChild(document.createTextNode(tokens[i]));
+					node.appendChild(span);
+				} else {
+					node.appendChild(document.createTextNode(tokens[i]));
+				}
+			}
+		}
+
+		function tokenDiffCells (row, baseIndex, newIndex) {
+			var baseText = baseTextLines[baseIndex].replace(/\t/g, "\u00a0\u00a0\u00a0\u00a0");
+			var newText = newTextLines[newIndex].replace(/\t/g, "\u00a0\u00a0\u00a0\u00a0");
+			var baseTokens = baseText.match(/\s+|[^\s]+/g) || [];
+			var newTokens = newText.match(/\s+|[^\s]+/g) || [];
+			var matcher = new difflib.SequenceMatcher(baseTokens, newTokens);
+			var tokenOpcodes = matcher.get_opcodes();
+			var baseCell = celt("td", "replace worddiff");
+			var newCell = celt("td", "replace worddiff");
+
+			for (var i = 0; i < tokenOpcodes.length; i++) {
+				var opcode = tokenOpcodes[i];
+				var tag = opcode[0];
+				var baseStart = opcode[1];
+				var baseEnd = opcode[2];
+				var newStart = opcode[3];
+				var newEnd = opcode[4];
+
+				if (tag == "equal") {
+					appendTokens(baseCell, baseTokens.slice(baseStart, baseEnd), "");
+					appendTokens(newCell, newTokens.slice(newStart, newEnd), "");
+				} else {
+					appendTokens(baseCell, baseTokens.slice(baseStart, baseEnd), "word-delete");
+					appendTokens(newCell, newTokens.slice(newStart, newEnd), "word-insert");
+				}
+			}
+
+			row.appendChild(telt("th", (baseIndex + 1).toString()));
+			row.appendChild(baseCell);
+			row.appendChild(telt("th", (newIndex + 1).toString()));
+			row.appendChild(newCell);
+		}
+
+		function highlightedWordCell (text, clazz) {
+			var cell = celt("td", "worddiff");
+			appendTokens(cell, (text.replace(/\t/g, "\u00a0\u00a0\u00a0\u00a0").match(/\s+|[^\s]+/g) || []), clazz);
+			return cell;
+		}
+
+		function addSideBySideChangedCells (row, baseIndex, baseEnd, newIndex, newEnd, change) {
+			if (change == "replace" && baseIndex < baseEnd && newIndex < newEnd) {
+				tokenDiffCells(row, baseIndex, newIndex);
+				return [baseIndex + 1, newIndex + 1];
+			}
+
+			if ((change == "delete" || change == "replace") && baseIndex < baseEnd && newIndex >= newEnd) {
+				row.appendChild(telt("th", (baseIndex + 1).toString()));
+				row.appendChild(highlightedWordCell(baseTextLines[baseIndex], "word-delete"));
+				row.appendChild(document.createElement("th"));
+				row.appendChild(celt("td", "empty"));
+				return [baseIndex + 1, newIndex];
+			}
+
+			if ((change == "insert" || change == "replace") && newIndex < newEnd && baseIndex >= baseEnd) {
+				row.appendChild(document.createElement("th"));
+				row.appendChild(celt("td", "empty"));
+				row.appendChild(telt("th", (newIndex + 1).toString()));
+				row.appendChild(highlightedWordCell(newTextLines[newIndex], "word-insert"));
+				return [baseIndex, newIndex + 1];
+			}
+
+			return [
+				addCells(row, baseIndex, baseEnd, baseTextLines, change),
+				addCells(row, newIndex, newEnd, newTextLines, change)
+			];
+		}
 	
 		var tdata = document.createElement("thead");
 		var node = document.createElement("tr");
@@ -173,8 +253,9 @@ var diffview = {
 						addCellsInline(node, b++, n++, baseTextLines, change);
 					}
 				} else {
-					b = addCells(node, b, be, baseTextLines, change);
-					n = addCells(node, n, ne, newTextLines, change);
+					var nextIndexes = addSideBySideChangedCells(node, b, be, n, ne, change);
+					b = nextIndexes[0];
+					n = nextIndexes[1];
 				}
 			}
 
